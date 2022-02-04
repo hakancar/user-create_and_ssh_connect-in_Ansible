@@ -1,0 +1,47 @@
+---
+- name: creating users
+  hosts: "*" #all is possible
+  become: yes
+  tasks:
+   - user:
+      name: "{{ item }}"
+      state: present
+     loop:
+      - name1
+      - name2
+      - name3
+      - name4     
+   - group:
+      name: "{{ item }}"
+      state: present
+     loop:
+      - group1
+      - group2
+
+   - ansible.builtin.user:
+      name: name1
+      shell: /bin/bash
+      groups: group1,group2
+      append: yes
+      
+   - ansible.builtin.user:
+      name: name2
+      shell: /bin/bash
+      groups: group2
+      append: yes
+
+   - authorized_key:
+       user: name1
+       state: present
+       key: "{{ lookup('file', './user_id_rsa.pub') }}"
+
+   - authorized_key:
+       user: name2
+       state: present
+       key: "{{ lookup('file', './user_id_rsa.pub') }}"
+       
+// if you need the same process for other users, you can add this script to the main block
+   # - authorized_key:
+   #     user: name3
+   #     state: present
+   #     key: "{{ lookup('file', './user_id_rsa.pub') }}"
