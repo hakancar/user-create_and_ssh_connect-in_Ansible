@@ -2,19 +2,19 @@
 - name: creating users
   hosts: "*" #all is possible
   become: yes
+  vars_files:
+   - ./usernames_var.yml
   tasks:
-   - user:
+  - user:
+      name: "{{ item.name }}"
+      state: present
+    loop:
+      - "{{ usernames_var }}"     
+
+  - group:
       name: "{{ item }}"
       state: present
-     loop:
-      - name1
-      - name2
-      - name3
-      - name4     
-   - group:
-      name: "{{ item }}"
-      state: present
-     loop:
+    loop:
       - group1
       - group2
 
@@ -31,16 +31,16 @@
       append: yes
 
    - authorized_key:
-       user: name1
+       user: username1
        state: present
-       key: "{{ lookup('file', './user_id_rsa.pub') }}"
+       key: "{{ lookup('file', './userpublickey/username1_publickey.pub') }}"
 
-   - authorized_key:
-       user: name2
-       state: present
-       key: "{{ lookup('file', './user_id_rsa.pub') }}"
+   # - authorized_key:
+   #     user: name2
+   #     state: present
+   #     key: "{{ lookup('file', './user_id_rsa.pub') }}"
        
-// if you need the same process for other users, you can add this script to the main block
+# if you need the same process for other users, you can add this script to the main block
    # - authorized_key:
    #     user: name3
    #     state: present

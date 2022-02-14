@@ -1,0 +1,39 @@
+---
+- name: creating users
+  hosts: "*" #all is possible
+  become: yes
+  vars_files:
+   - ./usernames_var.yml
+   - ./groupnames_var.yml
+  tasks:
+   - group:
+      name: "{{ item.group }}"
+      state: present
+     loop: "{{ groupnames_var }}"
+   - user:
+      name: "{{ item.name }}"
+      state: present
+     loop: "{{ usernames_var }}"      
+   
+
+   - ansible.builtin.user:
+      name: name1
+      shell: /bin/bash
+      groups: group1,group2
+      append: yes
+      
+   - ansible.builtin.user:
+      name: name2
+      shell: /bin/bash
+      groups: group2
+      append: yes
+
+  #  - authorized_key:
+  #      user: name1
+  #      state: present
+  #      key: "{{ lookup('file', './user_id_rsa.pub') }}"
+
+  #  - authorized_key:
+  #      user: name2
+  #      state: present
+  #      key: "{{ lookup('file', './user_id_rsa.pub') }}"
